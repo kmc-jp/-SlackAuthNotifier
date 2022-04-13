@@ -23,6 +23,8 @@ func main() {
 	var failed = regexp.MustCompile(`Failed\s(password|publickey)\sfor\s(\S+)from\s(\S+)port\s(\S+)`)
 	var failedInvalidUser = regexp.MustCompile(`Failed\s(password|publickey)\sfor\sinvalid\suser\s(\S+)from\s(\S+)port\s(\S+)`)
 
+	fmt.Println("Start Auth Notify")
+
 	for {
 		var loginMessage = <-messageChan
 
@@ -51,6 +53,9 @@ func main() {
 
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
+			message.Text = loginMessage.LastLine
+			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
+		default:
 			message.Text = loginMessage.LastLine
 			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
 		}
