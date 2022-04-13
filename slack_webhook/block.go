@@ -138,6 +138,12 @@ func (b BlockBase) MarshalJSON() ([]byte, error) {
 			Source     string `json:"source"`
 		}
 		return json.Marshal(base{b.Type, b.ExternalID, b.Source})
+	case "header":
+		type header struct {
+			Type string       `json:"type"`
+			Text BlockElement `json:"text,omitempty"`
+		}
+		return json.Marshal(header{b.Type, b.Text})
 	}
 
 	return nil, fmt.Errorf("IlligalFormat")
