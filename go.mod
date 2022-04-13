@@ -1,4 +1,4 @@
-module github.com/TKMAX777/AuthNotify
+module github.com/TKMAX777/AuthNotifier
 
 go 1.18
 

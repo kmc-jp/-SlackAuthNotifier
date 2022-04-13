@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/TKMAX777/AuthNotify/slack_webhook"
-	"github.com/TKMAX777/AuthNotify/ssh_log"
+	"github.com/TKMAX777/AuthNotifier/slack_webhook"
+	"github.com/TKMAX777/AuthNotifier/ssh_log"
 )
 
 func main() {
