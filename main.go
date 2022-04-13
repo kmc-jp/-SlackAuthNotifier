@@ -42,6 +42,13 @@ func main() {
 			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
 			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
+			submatch := failed.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
+			if submatch[2] == "root" && os.Getenv("ROOT_NOTIFY") == "no" {
+				message.Text = loginMessage.LastLine
+				sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
+				break
+			}
+
 			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
 
 			var blocks = make([]slack_webhook.BlockBase, 0)
