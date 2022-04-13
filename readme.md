@@ -7,7 +7,7 @@ This program monitors /var/log/auth.log in Slack to post a history of login atte
 ## Install
 
 ```sh
-go install github.com/TKMAX777/AuthNotifier
+go install github.com/TKMAX777/SlackAuthNotifier
 ```
 
 ## Usage

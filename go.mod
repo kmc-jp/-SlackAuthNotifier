@@ -1,4 +1,4 @@
-module github.com/TKMAX777/AuthNotifier
+module github.com/TKMAX777/SlackAuthNotifier
 
 go 1.18
 
