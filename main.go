@@ -49,8 +49,8 @@ func main() {
 			var section = slack_webhook.SectionBlock()
 			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
 
-			blocks = append(blocks, section)
 			blocks = append(blocks, slack_webhook.HeaderBlock("!Caution!", true))
+			blocks = append(blocks, section)
 
 			message.Blocks = blocks
 
