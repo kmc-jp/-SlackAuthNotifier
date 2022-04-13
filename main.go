@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/TKMAX777/AuthNotify/slack_webhook"
 	"github.com/TKMAX777/AuthNotify/ssh_log"
@@ -27,12 +28,14 @@ func main() {
 
 		var message = slack_webhook.Message{
 			Username: "SSH Auth Notifier",
-			Channel:  os.Getenv("SLACK_CHANNEL"),
 		}
+
+		var sendChannels []string
 
 		switch {
 		case accepted.MatchString(loginMessage.LastLine):
 			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
 			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
 
@@ -45,10 +48,16 @@ func main() {
 			blocks = append(blocks, slack_webhook.HeaderBlock("!Caution!", true))
 
 			message.Blocks = blocks
+
+			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
 			message.Text = loginMessage.LastLine
+			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
 		}
 
-		slackHook.Send(message)
+		for _, channel := range sendChannels {
+			message.Channel = channel
+			slackHook.Send(message)
+		}
 	}
 }
