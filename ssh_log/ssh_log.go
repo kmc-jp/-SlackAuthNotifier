@@ -39,6 +39,7 @@ func (h *Handler) Start() (chan Message, error) {
 	}
 
 	h.watcher = watcher
+	watcher.Add(authFilePath)
 
 	var messageChan = make(chan Message)
 
