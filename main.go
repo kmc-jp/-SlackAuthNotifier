@@ -37,7 +37,9 @@ func main() {
 		var loginMessage = <-messageChan
 
 		var message = slack_webhook.Message{
-			Username: fmt.Sprintf("[%s] SSH Auth Notifier", host),
+			Username:  fmt.Sprintf("[%s] SSH Auth Notifier", strings.ToUpper(host)),
+			IconEmoji: os.Getenv("SLACK_ICON_EMOJI"),
+			IconURL:   os.Getenv("SLACK_ICON_URI"),
 		}
 
 		var sendChannels []string
