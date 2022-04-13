@@ -28,11 +28,16 @@ func main() {
 
 	fmt.Println("Start Auth Notify")
 
+	host, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
+
 	for {
 		var loginMessage = <-messageChan
 
 		var message = slack_webhook.Message{
-			Username: "SSH Auth Notifier",
+			Username: fmt.Sprintf("[%s] SSH Auth Notifier", host),
 		}
 
 		var sendChannels []string
