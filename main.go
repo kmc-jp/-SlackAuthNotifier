@@ -12,6 +12,8 @@ import (
 
 func main() {
 	var sshHandler = ssh_log.New()
+	defer sshHandler.Close()
+
 	messageChan, err := sshHandler.Start()
 	if err != nil {
 		panic(err)
