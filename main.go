@@ -56,7 +56,7 @@ func main() {
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
 			message.Text = loginMessage.LastLine
-			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
+			sendChannels = strings.Split(os.Getenv("SLACK_FAILED_CHANNELS"), ",")
 		default:
 			message.Text = loginMessage.LastLine
 			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
