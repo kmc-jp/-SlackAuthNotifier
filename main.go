@@ -22,7 +22,6 @@ func main() {
 	var slackHook = slack_webhook.New(os.Getenv("SLACK_TOKEN"))
 
 	var accepted = regexp.MustCompile(`Accepted\s+(password|publickey)\s+for\s+(\S+)\s+from\s+(\S+)\s+port\s+(\S+)`)
-	//Accepted publickey for tkmax777 from 192.168.100.64 port 52396 s
 	var failed = regexp.MustCompile(`Failed\s+(password|publickey)\s+for\s+(\S+)\s+from\s(\S+)\s+port\s+(\S+)`)
 	var failedInvalidUser = regexp.MustCompile(`Failed\s+(password|publickey)\s+for\s+invalid\s+user\s+(\S+)\s+from\s+(\S+)\s+port\s+(\S+)`)
 
