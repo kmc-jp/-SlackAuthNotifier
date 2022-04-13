@@ -56,7 +56,7 @@ func main() {
 		}
 
 		for _, channel := range sendChannels {
-			message.Channel = channel
+			message.Channel = strings.TrimSpace(channel)
 			slackHook.Send(message)
 		}
 	}
