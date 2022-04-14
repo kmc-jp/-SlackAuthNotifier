@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"regexp"
 	"strings"
@@ -46,7 +47,19 @@ func main() {
 
 		switch {
 		case accepted.MatchString(loginMessage.LastLine):
-			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			submatch := accepted.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
+
+			var content string
+
+			// get DN for the address
+			addrs, err := net.LookupAddr(submatch[3])
+			if err == nil && len(addrs) > 0 {
+				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
+			} else {
+				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			}
+
+			message.Text = content
 			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
 			submatch := failed.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
@@ -56,12 +69,22 @@ func main() {
 				break
 			}
 
-			message.Text = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			var content string
+
+			// get DN for the address
+			addrs, err := net.LookupAddr(submatch[3])
+			if err == nil && len(addrs) > 0 {
+				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
+			} else {
+				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			}
+
+			message.Text = content
 
 			var blocks = make([]slack_webhook.BlockBase, 0)
 
 			var section = slack_webhook.SectionBlock()
-			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
+			section.Text = slack_webhook.MrkdwnElement(content, false)
 
 			blocks = append(blocks, slack_webhook.HeaderBlock("!Caution!", true))
 			blocks = append(blocks, section)
@@ -70,7 +93,21 @@ func main() {
 
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
-			message.Text = loginMessage.LastLine
+
+			submatch := failedInvalidUser.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
+
+			var content string
+
+			// get DN for the address
+			addrs, err := net.LookupAddr(submatch[3])
+			if err == nil && len(addrs) > 0 {
+				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
+			} else {
+				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
+			}
+
+			message.Text = content
+
 			sendChannels = strings.Split(os.Getenv("SLACK_FAILED_CHANNELS"), ",")
 		default:
 			message.Text = loginMessage.LastLine
