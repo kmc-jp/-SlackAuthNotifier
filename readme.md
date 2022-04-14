@@ -2,7 +2,7 @@
 
 ## About
 
-This program monitors /var/log/auth.log in Slack to post a history of login attempts.
+This program monitors /var/log/auth.log to post a history of login attempts to Slack.
 
 ## Install
 
