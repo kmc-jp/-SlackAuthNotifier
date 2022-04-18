@@ -48,17 +48,29 @@ func main() {
 		case accepted.MatchString(loginMessage.LastLine):
 			submatch := accepted.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			var content string
+			var section = slack_webhook.SectionBlock()
+			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
 
+			var blocks = make([]slack_webhook.BlockBase, 0)
+			blocks = append(blocks, section)
+
+			var content string
 			// get DN for the address
 			addrs, err := net.LookupAddr(submatch[3])
 			if err == nil && len(addrs) > 0 {
+				section = slack_webhook.SectionBlock()
+				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
+
+				blocks = append(blocks, section)
+
 				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
 			} else {
 				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
 			}
 
+			message.Blocks = blocks
 			message.Text = content
+
 			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
 			submatch := failed.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
@@ -68,43 +80,54 @@ func main() {
 				break
 			}
 
-			var content string
+			var section = slack_webhook.SectionBlock()
+			section.Text = slack_webhook.MrkdwnElement(loginMessage.LastLine, false)
 
+			var blocks = make([]slack_webhook.BlockBase, 0)
+			blocks = append(blocks, section)
+
+			var content string
 			// get DN for the address
 			addrs, err := net.LookupAddr(submatch[3])
 			if err == nil && len(addrs) > 0 {
+				section = slack_webhook.SectionBlock()
+				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
+
+				blocks = append(blocks, section)
+
 				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
 			} else {
 				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
 			}
 
-			message.Text = content
-
-			var blocks = make([]slack_webhook.BlockBase, 0)
-
-			var section = slack_webhook.SectionBlock()
-			section.Text = slack_webhook.MrkdwnElement(content, false)
-
-			blocks = append(blocks, slack_webhook.HeaderBlock("!Caution!", true))
-			blocks = append(blocks, section)
-
 			message.Blocks = blocks
+			message.Text = content
 
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
-
 			submatch := failedInvalidUser.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			var content string
+			var section = slack_webhook.SectionBlock()
+			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
 
+			var blocks = make([]slack_webhook.BlockBase, 0)
+			blocks = append(blocks, section)
+
+			var content string
 			// get DN for the address
 			addrs, err := net.LookupAddr(submatch[3])
 			if err == nil && len(addrs) > 0 {
+				section = slack_webhook.SectionBlock()
+				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
+
+				blocks = append(blocks, section)
+
 				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
 			} else {
 				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
 			}
 
+			message.Blocks = blocks
 			message.Text = content
 
 			sendChannels = strings.Split(os.Getenv("SLACK_FAILED_CHANNELS"), ",")
