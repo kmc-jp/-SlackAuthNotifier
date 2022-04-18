@@ -24,7 +24,7 @@ func NewMessage(ipinfoClient *ipinfo.Client, addr, LastLine string, messageType 
 	if messageType == MessageTypeAccept {
 		section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", LastLine), false)
 	} else {
-		section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("%s", LastLine), false)
+		section.Text = slack_webhook.MrkdwnElement(LastLine, false)
 	}
 
 	var blocks = make([]slack_webhook.BlockBase, 0)
