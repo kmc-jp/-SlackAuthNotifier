@@ -44,12 +44,15 @@ func NewMessage(ipinfoClient *ipinfo.Client, addr, LastLine string, messageType 
 		content = fmt.Sprintf("*%s*", LastLine)
 	}
 
-	core, err := ipinfoClient.GetIPInfo(net.ParseIP(addr))
-	if err == nil && core != nil {
-		section = slack_webhook.SectionBlock()
-		section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("Country: %s\nCity: %s\nOrg: %s", core.Country, core.City, core.Org), true)
+	var IP = net.ParseIP(addr)
+	if IP != nil {
+		core, err := ipinfoClient.GetIPInfo(IP)
+		if err == nil && core != nil {
+			section = slack_webhook.SectionBlock()
+			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("Country: %s\nCity: %s\nOrg: %s", core.Country, core.City, core.Org), true)
 
-		blocks = append(blocks, section)
+			blocks = append(blocks, section)
+		}
 	}
 
 	message.Blocks = blocks
