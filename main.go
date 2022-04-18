@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"net"
 	"os"
 	"regexp"
 	"strings"
 
 	"github.com/TKMAX777/SlackAuthNotifier/slack_webhook"
 	"github.com/TKMAX777/SlackAuthNotifier/ssh_log"
+	"github.com/ipinfo/go/v2/ipinfo"
 )
 
 func main() {
@@ -26,6 +26,8 @@ func main() {
 	var failed = regexp.MustCompile(`Failed\s+(password|publickey)\s+for\s+(\S+)\s+from\s(\S+)\s+port\s+(\S+)`)
 	var failedInvalidUser = regexp.MustCompile(`Failed\s+(password|publickey)\s+for\s+invalid\s+user\s+(\S+)\s+from\s+(\S+)\s+port\s+(\S+)`)
 
+	var ipinfoClient = ipinfo.NewClient(nil, nil, os.Getenv("IPINFO_TOKEN"))
+
 	fmt.Println("Start Auth Notify")
 
 	host, err := os.Hostname()
@@ -36,40 +38,14 @@ func main() {
 	for {
 		var loginMessage = <-messageChan
 
-		var message = slack_webhook.Message{
-			Username:  fmt.Sprintf("[%s] SSH Auth Notifier", strings.ToUpper(host)),
-			IconEmoji: os.Getenv("SLACK_ICON_EMOJI"),
-			IconURL:   os.Getenv("SLACK_ICON_URI"),
-		}
-
+		var message slack_webhook.Message
 		var sendChannels []string
 
 		switch {
 		case accepted.MatchString(loginMessage.LastLine):
 			submatch := accepted.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			var section = slack_webhook.SectionBlock()
-			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
-
-			var blocks = make([]slack_webhook.BlockBase, 0)
-			blocks = append(blocks, section)
-
-			var content string
-			// get DN for the address
-			addrs, err := net.LookupAddr(submatch[3])
-			if err == nil && len(addrs) > 0 {
-				section = slack_webhook.SectionBlock()
-				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
-
-				blocks = append(blocks, section)
-
-				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
-			} else {
-				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
-			}
-
-			message.Blocks = blocks
-			message.Text = content
+			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeAccept)
 
 			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
@@ -80,61 +56,23 @@ func main() {
 				break
 			}
 
-			var section = slack_webhook.SectionBlock()
-			section.Text = slack_webhook.MrkdwnElement(loginMessage.LastLine, false)
-
-			var blocks = make([]slack_webhook.BlockBase, 0)
-			blocks = append(blocks, section)
-
-			var content string
-			// get DN for the address
-			addrs, err := net.LookupAddr(submatch[3])
-			if err == nil && len(addrs) > 0 {
-				section = slack_webhook.SectionBlock()
-				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
-
-				blocks = append(blocks, section)
-
-				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
-			} else {
-				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
-			}
-
-			message.Blocks = blocks
-			message.Text = content
+			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeCaution)
 
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
 			submatch := failedInvalidUser.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			var section = slack_webhook.SectionBlock()
-			section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("*%s*", loginMessage.LastLine), false)
-
-			var blocks = make([]slack_webhook.BlockBase, 0)
-			blocks = append(blocks, section)
-
-			var content string
-			// get DN for the address
-			addrs, err := net.LookupAddr(submatch[3])
-			if err == nil && len(addrs) > 0 {
-				section = slack_webhook.SectionBlock()
-				section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("addr: %s", strings.Join(addrs, " ")), true)
-
-				blocks = append(blocks, section)
-
-				content = fmt.Sprintf("*%s*\naddr: %s", loginMessage.LastLine, strings.Join(addrs, " "))
-			} else {
-				content = fmt.Sprintf("*%s*", loginMessage.LastLine)
-			}
-
-			message.Blocks = blocks
-			message.Text = content
+			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeFailed)
 
 			sendChannels = strings.Split(os.Getenv("SLACK_FAILED_CHANNELS"), ",")
 		default:
 			message.Text = loginMessage.LastLine
 			sendChannels = strings.Split(os.Getenv("SLACK_OTHER_CHANNELS"), ",")
 		}
+
+		message.Username = fmt.Sprintf("[%s] SSH Auth Notifier", strings.ToUpper(host))
+		message.IconEmoji = os.Getenv("SLACK_ICON_EMOJI")
+		message.IconURL = os.Getenv("SLACK_ICON_URI")
 
 		for _, channel := range sendChannels {
 			message.Channel = strings.TrimSpace(channel)
