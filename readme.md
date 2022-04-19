@@ -30,3 +30,17 @@ ROOT_NOTIFY=no
 SLACK_TOKEN=xoxb-*****
 SLACK_ICON_EMOJI=:key:
 ```
+
+## Options
+
+### Customize Login Message
+
+You can change the user name displayed by creating the following file
+
+In addition, you can add mentions to messages.
+
+```
+# ~/.slack_notifier
+CustomName=*****
+SlackID=U******
+```
