@@ -27,6 +27,7 @@ func main() {
 	var failedInvalidUser = regexp.MustCompile(`Failed\s+(password|publickey)\s+for\s+invalid\s+user\s+(\S+)\s+from\s+(\S+)\s+port\s+(\S+)`)
 
 	var ipinfoClient = ipinfo.NewClient(nil, nil, os.Getenv("IPINFO_TOKEN"))
+	var slackMessage = NewSlackMessageHandler(ipinfoClient)
 
 	fmt.Println("Start Auth Notify")
 
@@ -45,8 +46,7 @@ func main() {
 		case accepted.MatchString(loginMessage.LastLine):
 			submatch := accepted.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeAccept)
-
+			message = slackMessage.NewMessage(submatch[3], submatch[2], loginMessage.LastLine, MessageTypeAccept)
 			sendChannels = strings.Split(os.Getenv("SLACK_ACCEPTED_CHANNELS"), ",")
 		case failed.MatchString(loginMessage.LastLine):
 			submatch := failed.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
@@ -56,13 +56,13 @@ func main() {
 				break
 			}
 
-			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeCaution)
+			message = slackMessage.NewMessage(submatch[3], submatch[2], loginMessage.LastLine, MessageTypeCaution)
 
 			sendChannels = strings.Split(os.Getenv("SLACK_CAUTION_CHANNELS"), ",")
 		case failedInvalidUser.MatchString(loginMessage.LastLine):
 			submatch := failedInvalidUser.FindAllStringSubmatch(loginMessage.LastLine, 1)[0]
 
-			message = NewMessage(ipinfoClient, submatch[3], loginMessage.LastLine, MessageTypeFailed)
+			message = slackMessage.NewMessage(submatch[3], submatch[2], loginMessage.LastLine, MessageTypeFailed)
 
 			sendChannels = strings.Split(os.Getenv("SLACK_FAILED_CHANNELS"), ",")
 		default:
