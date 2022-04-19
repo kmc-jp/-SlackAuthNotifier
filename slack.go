@@ -106,6 +106,12 @@ func (s SlackMessageHandler) readSettingsFile(File string) SlackUserSetting {
 	for _, line := range lines {
 		sep := strings.Split(line, "=")
 		var value = strings.TrimSpace(strings.Join(sep[1:], "="))
+		value = strings.TrimSuffix(value, "\"")
+		value = strings.TrimSuffix(value, "'")
+
+		value = strings.TrimPrefix(value, "\"")
+		value = strings.TrimPrefix(value, "'")
+
 		switch strings.TrimSpace(sep[0]) {
 		case "CustomName":
 			settings.CustomName = value
