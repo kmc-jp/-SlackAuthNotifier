@@ -7,7 +7,7 @@ This program monitors /var/log/auth.log to post a history of login attempts to S
 ## Install
 
 ```sh
-go install github.com/TKMAX777/SlackAuthNotifier@latest
+go install github.com/kmc-jp/SlackAuthNotifier@latest
 ```
 
 ## Usage
