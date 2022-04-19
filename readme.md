@@ -33,7 +33,7 @@ SLACK_ICON_EMOJI=:key:
 
 ## Options
 
-### Customize Login Message
+### Customize Login Messages
 
 You can change the user name displayed by creating the following file
 
