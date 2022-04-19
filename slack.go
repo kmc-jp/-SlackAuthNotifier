@@ -58,7 +58,7 @@ func (s SlackMessageHandler) NewMessage(addr, username, LastLine string, message
 		var text = fmt.Sprintf("User: %s", username)
 
 		if settings.SlackID != "" {
-			text += fmt.Sprintf("(<@%s>)", settings.SlackID)
+			text += fmt.Sprintf(" (<@%s>)", settings.SlackID)
 		}
 
 		section.Text = slack_webhook.MrkdwnElement(text, false)
