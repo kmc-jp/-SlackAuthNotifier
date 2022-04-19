@@ -66,6 +66,8 @@ func (s SlackMessageHandler) NewMessage(addr, username, LastLine string, message
 		section.Text = slack_webhook.MrkdwnElement(fmt.Sprintf("User: %s", username), false)
 	}
 
+	blocks = append(blocks, section)
+
 	var content string
 	// get DN for the address
 	addrs, err := net.LookupAddr(addr)
@@ -79,8 +81,6 @@ func (s SlackMessageHandler) NewMessage(addr, username, LastLine string, message
 	} else {
 		content = fmt.Sprintf("*%s*", LastLine)
 	}
-
-	blocks = append(blocks, section)
 
 	var IP = net.ParseIP(addr)
 	if IP != nil {
