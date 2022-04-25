@@ -6,7 +6,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/TKMAX777/SlackAuthNotifier/slack_webhook"
+	"github.com/kmc-jp/SlackAuthNotifier/slack_webhook"
 	"github.com/ipinfo/go/v2/ipinfo"
 )
 
