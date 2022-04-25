@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -37,7 +38,11 @@ func main() {
 	}
 
 	for {
-		var loginMessage = <-messageChan
+		var loginMessage, ok = <-messageChan
+		if !ok {
+			log.Println("Message Channel Closed")
+			return
+		}
 
 		var message slack_webhook.Message
 		var sendChannels []string

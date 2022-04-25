@@ -48,6 +48,7 @@ func (h *Handler) Start() (chan Message, error) {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
+					close(messageChan)
 					h.Close()
 					return
 				}
@@ -95,12 +96,12 @@ func (h *Handler) Start() (chan Message, error) {
 				}
 
 			case err, ok := <-watcher.Errors:
+				log.Printf("Error at waching files: %v\n", err.Error())
 				if !ok {
+					close(messageChan)
 					h.Close()
 					return
 				}
-
-				log.Printf("Error at waching files: %s\n", err.Error())
 			}
 		}
 	}()
