@@ -11,7 +11,7 @@ This program monitors /var/log/auth.log to post a history of login attempts to S
 ## Install
 
 ```sh
-go install github.com/TKMAX777/SlackAuthNotifier@latest
+go install github.com/kmc-jp/SlackAuthNotifier@latest
 ```
 
 ## Usage
@@ -33,4 +33,18 @@ ROOT_NOTIFY=no
 
 SLACK_TOKEN=xoxb-*****
 SLACK_ICON_EMOJI=:key:
+```
+
+## Options
+
+### Customize Login Messages
+
+You can change the user name displayed by creating the following file
+
+In addition, you can add mentions to messages.
+
+```
+# ~/.slack_notifier
+CustomName=*****
+SlackID=U******
 ```
