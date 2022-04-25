@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/TKMAX777/SlackAuthNotifier/slack_webhook"
-	"github.com/TKMAX777/SlackAuthNotifier/ssh_log"
+	"github.com/kmc-jp/SlackAuthNotifier/slack_webhook"
+	"github.com/kmc-jp/SlackAuthNotifier/ssh_log"
 	"github.com/ipinfo/go/v2/ipinfo"
 )
 
