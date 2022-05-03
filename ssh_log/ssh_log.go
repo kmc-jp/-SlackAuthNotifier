@@ -85,7 +85,7 @@ func (h *Handler) Start() (chan Message, error) {
 					continue
 				}
 
-				printTime, err := time.Parse("Jan 02 15:04:05 ", tlines[0])
+				printTime, err := time.Parse("Jan 2 15:04:05 ", tlines[0])
 				if err != nil {
 					continue
 				}
