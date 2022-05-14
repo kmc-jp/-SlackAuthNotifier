@@ -55,6 +55,7 @@ func (h *Handler) Start() (chan Message, error) {
 
 				// Deal with log rotation
 				if event.Op&fsnotify.Rename == fsnotify.Rename {
+					log.Println("Log file was rotated")
 					h.watcher.Remove(event.Name)
 					h.watcher.Add(authFilePath)
 				}
