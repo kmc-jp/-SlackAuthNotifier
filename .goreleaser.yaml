@@ -24,3 +24,16 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+release:
+  draft: false
+
+  prerelease: auto
+
+  mode: append
+
+  header: |
+    ## Update ({{ .Date }})
+  footer: |
+    Those were the changes on {{ .Tag }}!
+
+  name_template: "{{.ProjectName}}-v{{.Version}} {{.Env.USER}}"
