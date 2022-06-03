@@ -14,6 +14,8 @@ archives:
       linux: Linux
       386: i386
       amd64: x86_64
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -36,4 +38,4 @@ release:
   footer: |
     Those were the changes on {{ .Tag }}!
 
-  name_template: "{{.ProjectName}}"
+  name_template: "{{.ProjectName}}-v{{.Version}}"
