@@ -6,8 +6,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/kmc-jp/SlackAuthNotifier/slack_webhook"
 	"github.com/ipinfo/go/v2/ipinfo"
+	"github.com/kmc-jp/SlackAuthNotifier/slack_webhook"
 )
 
 type MessageType int
@@ -83,7 +83,7 @@ func (s SlackMessageHandler) NewMessage(addr, username, LastLine string, message
 	}
 
 	var IP = net.ParseIP(addr)
-	if IP != nil {
+	if IP != nil && !IP.IsPrivate() && !IP.IsLoopback() {
 		core, err := s.ipinfoClient.GetIPInfo(IP)
 		if err == nil && core != nil {
 			section = slack_webhook.SectionBlock()
