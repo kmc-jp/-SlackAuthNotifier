@@ -27,7 +27,7 @@ type Message struct {
 
 func New() *Handler {
 	return &Handler{
-		TimeFormat: "Jan 2 15:04:05 ",
+		TimeFormat: "Jan 2 15:04:05",
 	}
 }
 
@@ -95,7 +95,7 @@ func (h *Handler) Start() (chan Message, error) {
 					continue
 				}
 
-				printTime, err := time.Parse(h.TimeFormat, tlines[0])
+				printTime, err := time.Parse(h.TimeFormat, strings.TrimSpace(tlines[0]))
 				if err != nil {
 					continue
 				}
