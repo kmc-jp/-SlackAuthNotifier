@@ -7,14 +7,18 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ipinfo/go/v2/ipinfo"
 	"github.com/kmc-jp/SlackAuthNotifier/slack_webhook"
 	"github.com/kmc-jp/SlackAuthNotifier/ssh_log"
-	"github.com/ipinfo/go/v2/ipinfo"
 )
 
 func main() {
 	var sshHandler = ssh_log.New()
 	defer sshHandler.Close()
+
+	if os.Getenv("TIME_FORMAT") != "" {
+		sshHandler.TimeFormat = os.Getenv("TIME_FORMAT")
+	}
 
 	messageChan, err := sshHandler.Start()
 	if err != nil {

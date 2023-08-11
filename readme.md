@@ -29,6 +29,8 @@ ROOT_NOTIFY=no
 
 SLACK_TOKEN=xoxb-*****
 SLACK_ICON_EMOJI=:key:
+
+TIME_FORMAT=Jan 2 15:04:05
 ```
 
 ## Options

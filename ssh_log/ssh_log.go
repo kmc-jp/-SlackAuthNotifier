@@ -15,8 +15,9 @@ import (
 const authFilePath = "/var/log/auth.log"
 
 type Handler struct {
-	filepath string
-	watcher  *fsnotify.Watcher
+	filepath   string
+	TimeFormat string
+	watcher    *fsnotify.Watcher
 }
 
 type Message struct {
@@ -25,7 +26,9 @@ type Message struct {
 }
 
 func New() *Handler {
-	return &Handler{}
+	return &Handler{
+		TimeFormat: "Jan 2 15:04:05 ",
+	}
 }
 
 func (h *Handler) Close() error {
@@ -92,7 +95,7 @@ func (h *Handler) Start() (chan Message, error) {
 					continue
 				}
 
-				printTime, err := time.Parse("Jan 2 15:04:05 ", tlines[0])
+				printTime, err := time.Parse(h.TimeFormat, tlines[0])
 				if err != nil {
 					continue
 				}
